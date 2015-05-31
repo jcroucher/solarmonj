@@ -11,6 +11,10 @@ This software has been developed specifically for the Raspberry Pi ( raspberrypi
 
 This project has been extended to send these logs to [Logstash](https://www.elastic.co/products/logstash), via a TCP/IP socket.
 
+### Example Logstash Dashboard
+
+![](https://raw.githubusercontent.com/benleov/solarmonj/master/images/kibana_dashboard.png)
+
 ### Requirements
 
 To run this project you will need:
