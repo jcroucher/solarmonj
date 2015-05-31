@@ -6,6 +6,9 @@
 #include <sys/stat.h>
 #include <stdlib.h>
 
+#include "clientsocket.h"
+#include "socketexception.h"
+
 #include "jfyconnection.h"
 
 using namespace std;
@@ -20,42 +23,39 @@ int main( int argc, char** argv )
 		return 1;
 	}
 	
-	struct stat sb;
-	std::stringstream sstm;
+	// Get the current time
+	time_t now = time(0);
 	
-	// Get the current time, used for logs
-	time_t now 			= time(0);
-	struct tm *tmData = localtime(&now);
-	
-	int year 	= tmData->tm_year + 1900;
-	int month 	= tmData->tm_mon + 1;
-	int day 		= tmData->tm_mday;
-	
-	// Create the log path using the year and month
-	sstm << logPathRoot << year << "/" << month;
-	string logPath = sstm.str();
-	
-	// Add the file name to the path
-	sstm << "/" << day << ".csv";
-	string logFile = sstm.str();
-	
-	if(stat(&logPath[0], &sb) != 0 )
-	{
-		string command = "mkdir -p " + logPath;
-		system(&command[0]);
-	}
-		
 	// Get the data
 	Jfy::InverterData data;
 	conn.readNormalInfo( &data );
 	
-	// Log the data
-	ofstream csvFile;
-	csvFile.open (&logFile[0], ios::app);	
-	csvFile << now  << "," <<   data.temperature << "," << data.energyCurrent << "," << data.energyToday << "," << data.energyTotal << "," << data.voltageDc << "," << data.voltageAc << "," << data.frequency << "," << data.current << "\n";
-  	csvFile.close();
+	// Write to logstash
 
-	// Close the connection to the inverter. 
+	try
+	{
+		ClientSocket client_socket ( "localhost", 7022 );
+
+		try
+		{
+			stringstream ss;
+
+			ss << now << "," <<   data.temperature << "," << data.energyCurrent << "," << data.energyToday << "," << data.pvoltageAc << "," << data.voltageDc << "," << data.voltageAc << "," << data.frequency << "," << data.current << "\n";
+
+			client_socket << ss.str();
+			std::cout << "Sent\n";
+		}
+		catch (SocketException& e)
+		{
+      			std::cout << "Error writing to logging server:\n\"" << e.description() << "\"\n";	
+		}
+
+	} 
+	catch (SocketException& e)
+	{
+		std::cout << "Error connecting to logging server:\n\"" << e.description() << "\"\n";
+	}
+
 	conn.close();
 
 	return 0;
