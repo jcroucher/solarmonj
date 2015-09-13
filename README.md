@@ -27,14 +27,15 @@ To run this project you will need:
 
 In order to build this project you will need:
 
-* build-essentials 
+* build-essentials (or cmake)
 * g++
 
 ### Setup
 
-* Run make.
+* Run cmake .
+* run make
 * Install [Logstash](https://www.elastic.co/products/logstash)
-* Edit logstash.conf, placing the contents of /conf/logstash/logstash.conf 
+* Update /etc/logstash/logstash.conf, placing the contents of conf/logstash/logstash.conf in it.
 * Install [Elastisearch](https://www.elastic.co/products/elasticsearch)
 * Install [Kibana](https://www.elastic.co/products/kibana)
 * Start all three applications.
