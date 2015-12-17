@@ -8,14 +8,15 @@ using namespace std;
 namespace Jfy
 {
 	typedef struct {
-		float temperature;
-		float energyToday;
-		float voltageDc;
+		float temperature; 
+		float energyToday;  
+		float voltageDc; 
 		float current;
-		float voltageAc;
-		float frequency;
-		float energyCurrent;
-		float energyTotal;
+		float voltageAc; 
+		float frequency; 
+		float energyCurrent; 
+		float pvoltageAc; 
+
 	} InverterData;
 	
 	class Serial;
